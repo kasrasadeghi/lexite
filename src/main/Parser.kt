@@ -1,6 +1,17 @@
 package main
 
-data class Node(val value: String,
+enum class NodeType {
+  Program,
+  Function,
+  Type,
+  Block,
+  Call,
+  StringLiteral,
+  IntLiteral
+}
+
+data class Node(val type: NodeType,
+                val value: String = "",
                 val children: ArrayList<Node> = ArrayList(),
                 var parent: Node? = null) {
   operator fun plusAssign(n: Node) {
@@ -14,9 +25,9 @@ data class Node(val value: String,
 
     val acc = StringBuilder()
     acc += (1..level()).joinToString("") { "  " }
-    acc += "($value"
+    acc += "($type $value"
     if (children.isNotEmpty()) {
-      acc += "\nchildren.joinToString(\"\")"
+      acc += "\n${children.joinToString("")}"
     }
     acc += if (hasNextSibling()) ")\n" else ")"
 
@@ -47,13 +58,19 @@ fun parse(tokens: TokenStack): Node {
 class Parser(private val tokens: TokenStack) {
 
   fun p(type: TokenType): Node
-  { return Node(tokens.pop(type).value) }
+  { return p(NodeType.valueOf(type.name), type) }
+
+  fun pop(type: TokenType)
+  { p{ it.type == type } }
 
   fun p(pred: (Token) -> Boolean)
   { if (pred(tokens.peek())) tokens.pop() }
 
+  fun p(type: NodeType, t: TokenType): Node
+  { return Node(type, tokens.pop(t).value) }
+
   fun pProgram(): Node {
-    val program = Node("program")
+    val program = Node(NodeType.Program)
     while(tokens.isNotEmpty()) {
       program += pDefinition()
     }
@@ -61,20 +78,27 @@ class Parser(private val tokens: TokenStack) {
   }
 
   private fun pDefinition(): Node {
-    val type = pWord()
-    val def = pWord()
+    val type = pType()
+    val def = pCall()
     def += type
-    p(TokenType.LParen)
-    p(TokenType.RParen)
+    pop(TokenType.LParen)
+    pop(TokenType.RParen)
     def += pBlock()
     return def
   }
 
+  private fun pCall(): Node
+  { return p(NodeType.Call, TokenType.Word)}
+
+  private fun pType(): Node {
+    return p(NodeType.Type, TokenType.Word)
+  }
+
   private fun pBlock(): Node {
-    p(TokenType.LBrace)
-    val block = Node("Block")
+    pop(TokenType.LBrace)
+    val block = Node(NodeType.Block)
     while (tokens.not(TokenType.RBrace)) block += pStatement()
-    p(TokenType.RBrace)
+    pop(TokenType.RBrace)
     return block
   }
 
@@ -82,17 +106,16 @@ class Parser(private val tokens: TokenStack) {
   { return p(TokenType.Word) }
 
   private fun pStatement(): Node {
-    val statement = Node("print")
+    val statement = Node(NodeType.Call, "print")
     p{ it.value == "print"}
-    p(TokenType.LParen)
+    pop(TokenType.LParen)
     statement += pStringLiteral()
-    p(TokenType.RParen)
+    pop(TokenType.RParen)
     return statement
   }
 
   private fun pStringLiteral(): Node {
     val value = tokens.pop(TokenType.StringLiteral).value
-    //TODO check that substring "" returns emptystring
-    return Node(value.substring(1, value.length))
+    return Node(NodeType.StringLiteral, value)
   }
 }

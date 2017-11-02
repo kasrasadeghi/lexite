@@ -5,4 +5,5 @@ int main() {
 int temp() {
   print("hi")
   print("will")
+  print("")
 }
