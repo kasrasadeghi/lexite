@@ -13,9 +13,9 @@ enum class NodeType {
 data class Node(val type: NodeType,
                 val value: String = "",
                 val children: ArrayList<Node> = ArrayList(),
-                var parent: Node? = null) {
+                var parent: Node? = null): Iterable<Node> {
   operator fun plusAssign(n: Node) {
-    children += n
+    children.add(n)
     n.parent = this
   }
 
@@ -23,7 +23,7 @@ data class Node(val type: NodeType,
     return children[i]
   }
 
-  operator fun iterator(): MutableIterator<Node> {
+  override operator fun iterator(): MutableIterator<Node> {
     return children.iterator()
   }
 

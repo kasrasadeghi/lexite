@@ -5,13 +5,12 @@ fun eval(node: Node) {
 }
 
 fun eProgram(program: Node) {
-  for (node in program) {
-    eDefinition(node)
-  }
+  val main = program.first { it.value == "main" }
+  eDefinition(main)
 }
 
 fun eDefinition(def: Node) {
-  eBlock(def[2])
+  eBlock(def[1])
 }
 
 fun eBlock(block: Node) {
@@ -21,5 +20,6 @@ fun eBlock(block: Node) {
 }
 
 fun ePrint(statement: Node) {
-
+  val value = statement[0].value
+  println(value.substring(1, value.length - 1))
 }

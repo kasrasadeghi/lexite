@@ -7,6 +7,7 @@ fun main(args: Array<String>) {
   val tokens = lex(contents)
 
   val AST = parse(tokens)
+//  println(AST)
 
-  println(AST)
+  eval(AST)
 }
