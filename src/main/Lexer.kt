@@ -16,8 +16,9 @@ enum class TokenType(val pattern: String) {
 }
 
 data class Token(val type: TokenType, val value: String) {
-  override fun toString(): String
-  { return "(${type.name} $value)" }
+  override fun toString(): String {
+    return "(${type.name} $value)"
+  }
 }
 
 class TokenStack(private val tokens: LinkedList<Token>) {
@@ -29,19 +30,25 @@ class TokenStack(private val tokens: LinkedList<Token>) {
     return tokens.pop()
   }
 
-  fun pop(t: TokenType): Token
-  { return pop { it.type == t } }
+  fun pop(t: TokenType): Token {
+    return pop { it.type == t }
+  }
 
-  fun pop() { pop { true } }
+  fun pop() {
+    pop { true }
+  }
 
-  fun empty(): Boolean
-  { return tokens.isEmpty() }
+  fun empty(): Boolean {
+    return tokens.isEmpty()
+  }
 
-  fun isNotEmpty(): Boolean
-  { return tokens.isNotEmpty() }
+  fun isNotEmpty(): Boolean {
+    return tokens.isNotEmpty()
+  }
 
-  fun not(t: TokenType): Boolean
-  { return tokens.peek().type != t }
+  fun not(t: TokenType): Boolean {
+    return tokens.peek().type != t
+  }
 
   fun peek(): Token {
     if (empty())
@@ -49,8 +56,9 @@ class TokenStack(private val tokens: LinkedList<Token>) {
     return tokens.peek()
   }
 
-  override fun toString(): String
-  { return tokens.toString() }
+  override fun toString(): String {
+    return tokens.toString()
+  }
 }
 
 fun lex(contents: String): TokenStack {
