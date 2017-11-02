@@ -9,29 +9,26 @@ data class Node(val value: String,
   }
 
   override fun toString(): String {
+    operator fun (StringBuilder).plusAssign(a: String)
+    { this.append(a) }
+
     val acc = StringBuilder()
-    acc.append((1..level()).joinToString("") { "  " })
-    acc.append("($value")
+    acc += (1..level()).joinToString("") { "  " }
+    acc += "($value"
     if (children.isNotEmpty()) {
-      acc.append("\n")
-      acc.append(children.joinToString(""))
+      acc += "\nchildren.joinToString(\"\")"
     }
-    if (hasNextSibling()) {
-      acc.append(")")
-      acc.append("\n")
-    } else {
-      acc.append(")")
-    }
+    acc += if (hasNextSibling()) ")\n" else ")"
 
     return acc.toString()
   }
 
-  fun hasNextSibling(): Boolean {
+  private fun hasNextSibling(): Boolean {
     if (parent == null ) return false
     return parent!!.children.indexOf(this) != parent!!.children.size - 1
   }
 
-  fun level(): Int {
+  private fun level(): Int {
     var l = 0
     var curr: Node? = this
     while (curr != null) {
