@@ -16,31 +16,44 @@ enum class TokenType(val pattern: String) {
 }
 
 data class Token(val type: TokenType, val value: String) {
-  override fun toString(): String {
-    return "(${type.name} $value)"
-  }
+  override fun toString(): String
+  { return "(${type.name} $value)" }
 }
 
 class TokenStack(private val tokens: LinkedList<Token>) {
   fun pop(p: (Token) -> Boolean): Token {
-    if (tokens.isEmpty() || p(tokens.peek())) throw IllegalStateException("Expecting more tokens to pop.")
+    if (tokens.isEmpty() || !p(tokens.peek())) {
+      System.err.println(tokens)
+      throw IllegalStateException("Expecting more tokens to pop.")
+    }
     return tokens.pop()
   }
 
-  fun pop(t: TokenType): Token {
-    return pop { it.type == t }
+  fun pop(t: TokenType): Token
+  { return pop { it.type == t } }
+
+  fun pop() { pop { true } }
+
+  fun empty(): Boolean
+  { return tokens.isEmpty() }
+
+  fun isNotEmpty(): Boolean
+  { return tokens.isNotEmpty() }
+
+  fun not(t: TokenType): Boolean
+  { return tokens.peek().type != t }
+
+  fun peek(): Token {
+    if (empty())
+      throw IllegalStateException("Expecting token to peek.")
+    return tokens.peek()
   }
 
-  fun empty(): Boolean {
-    return tokens.isEmpty()
-  }
-
-  fun isNotEmpty(): Boolean {
-    return tokens.isNotEmpty()
-  }
+  override fun toString(): String
+  { return tokens.toString() }
 }
 
-fun lex(contents: String): LinkedList<Token> {
+fun lex(contents: String): TokenStack {
   val result = LinkedList<Token>()
 
   val matcher = TokenType.values()
@@ -54,5 +67,5 @@ fun lex(contents: String): LinkedList<Token> {
     result.add(Token(type, matcher.group(type.name)))
   }
 
-  return result
+  return TokenStack(result)
 }

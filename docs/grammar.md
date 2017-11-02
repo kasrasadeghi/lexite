@@ -2,16 +2,10 @@ program ->
     definition*
 
 definition -> 
-    type name ( ) block
+    Word Word ( ) block
 
 block -> 
     { statement* }
-    
-type -> 
-    Word
-    
-name -> 
-    Word
     
 statement ->
     print ( StringLiteral )
