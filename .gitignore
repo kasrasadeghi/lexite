@@ -1,5 +1,5 @@
 .idea/
-cornerstone.iml
+*.iml
 klex
 out/
 lib/
