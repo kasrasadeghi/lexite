@@ -1,4 +1,4 @@
-# cornerstone
+# lexite
 A compiler for a C-like language.
 
 # NOTE
@@ -25,7 +25,8 @@ to that level of complexity. To simplify the work, I could do:
 
 C-like --(S1)-> Lisp-like --(S2)-> Stack-like --(S3)-> ASM
 
-S1  = cornerstone :: C-like -> Lisp-like
-S2  = backbone    :: Lisp-like -> Stack-like
+S0  = lexite      :: C-like     -> Lisp-like
+S1  = cornerstone :: Lisp-like  -> Lisp-like
+S2  = backbone    :: Lisp-like  -> Stack-like
 S3  = ferra       :: Stack-like -> ASM       // generates asm
 S3' = otto        :: Stack-like -> IO ()     // interprets the stack-like language
